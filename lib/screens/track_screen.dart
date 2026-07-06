@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -54,7 +54,6 @@ class _TrackScreenState extends State<TrackScreen> {
       );
     }
 
-    // ✅ التأكد من وجود stops
     if (booking.stops.isEmpty) {
       return Scaffold(
         body: Center(
@@ -113,7 +112,6 @@ class _TrackScreenState extends State<TrackScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Journey header
                     Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
@@ -163,7 +161,6 @@ class _TrackScreenState extends State<TrackScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Live position
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -217,7 +214,6 @@ class _TrackScreenState extends State<TrackScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Stops timeline
                     Text(
                       isArabic ? 'خط السير' : 'Route',
                       style: GoogleFonts.cairo(
@@ -333,7 +329,6 @@ class _TrackScreenState extends State<TrackScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Map button
                     GestureDetector(
                       onTap: () => setState(() => _showMap = !_showMap),
                       child: Container(
@@ -397,7 +392,6 @@ class _MapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ التأكد من وجود stops
     if (booking.stops.isEmpty) {
       return Container(
         height: 200,

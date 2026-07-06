@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -18,14 +18,12 @@ class TrainListScreen extends StatelessWidget {
     required this.date,
   });
 
-  // ✅ دالة لتحويل الوقت لتنسيق 12 ساعة (تدعم العربية والإنجليزية)
   String _formatTime12Hour(String time, bool isArabic) {
     try {
       final parts = time.split(':');
       int hour = int.parse(parts[0]);
       int minute = int.parse(parts[1]);
 
-      // تحديد ص/م أو AM/PM
       final period = hour >= 12
           ? (isArabic ? 'م' : 'PM')
           : (isArabic ? 'ص' : 'AM');
@@ -38,7 +36,6 @@ class TrainListScreen extends StatelessWidget {
     }
   }
 
-  // دالة لإرجاع اللون حسب الوقت
   Color _getTimeColor(String time) {
     try {
       final parts = time.split(':');
@@ -52,7 +49,6 @@ class TrainListScreen extends StatelessWidget {
     }
   }
 
-  // دالة لإرجاع أيقونة الوقت
   IconData _getTimeIcon(String time) {
     try {
       final parts = time.split(':');
@@ -66,7 +62,6 @@ class TrainListScreen extends StatelessWidget {
     }
   }
 
-  // ✅ دالة لإرجاع نص الفترة الزمنية (تدعم العربية والإنجليزية)
   String _getTimePeriod(String time, bool isArabic) {
     try {
       final parts = time.split(':');
@@ -87,9 +82,7 @@ class TrainListScreen extends StatelessWidget {
     }
   }
 
-  // ✅ دالة للحصول على اسم المحطة المترجم بشكل صحيح
   String _getStationDisplayName(String stationName, bool isArabic) {
-    // البحث عن المحطة باستخدام الاسم العربي أو الإنجليزي
     final stationList = SampleData.allStations;
     Station? foundStation;
 
@@ -98,7 +91,6 @@ class TrainListScreen extends StatelessWidget {
         foundStation = station;
         break;
       }
-      // البحث بالاسم الإنجليزي
       final enName = SampleData.stationNameEn[station.name];
       if (enName == stationName) {
         foundStation = station;
@@ -110,7 +102,6 @@ class TrainListScreen extends StatelessWidget {
       return SampleData.getStationName(foundStation, isArabic);
     }
 
-    // إذا لم يتم العثور على المحطة، إرجاع الاسم الأصلي
     return stationName;
   }
 
@@ -120,14 +111,11 @@ class TrainListScreen extends StatelessWidget {
     final isArabic = appState.isArabic;
     final isDark = appState.isDarkMode;
 
-    // ✅ ترجمة أسماء المحطات للعرض في العنوان
     final fromDisplay = _getStationDisplayName(from, isArabic);
     final toDisplay = _getStationDisplayName(to, isArabic);
 
-    // جلب القطارات حسب المسار
     final allTrains = SampleData.getTrains(from, to);
 
-    // فلترة القطارات حسب الوقت المختار (± 3 ساعات)
     final filteredTrains = allTrains.where((train) {
       final timeParts = train.departureTime.split(':');
       final trainHour = int.parse(timeParts[0]);
@@ -141,12 +129,16 @@ class TrainListScreen extends StatelessWidget {
         trainMinute,
       );
 
-      final difference = trainDateTime.difference(date);
-      final differenceInHours = difference.inMinutes.abs() / 60;
-      return differenceInHours <= 3;
+      final now = DateTime.now();
+
+      if (DateTime(date.year, date.month, date.day)
+          .isBefore(DateTime(now.year, now.month, now.day))) {
+        return false;
+      }
+
+      return trainDateTime.isAfter(date) && trainDateTime.isAfter(now);
     }).toList();
 
-    // ترتيب القطارات حسب الوقت
     final sortedTrains = List.of(filteredTrains)
       ..sort((a, b) {
         final timeA = int.parse(a.departureTime.split(':')[0]);
@@ -171,7 +163,6 @@ class TrainListScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            // شريط المعلومات
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               color: isDark
@@ -241,7 +232,6 @@ class TrainListScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // قائمة القطارات
             if (sortedTrains.isEmpty)
               Expanded(
                 child: Center(
@@ -364,7 +354,6 @@ class _TrainCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // الصف العلوي: رقم القطار واسمه + حالة التوفر
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -420,11 +409,9 @@ class _TrainCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // مواعيد القطار
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // وقت الانطلاق
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,7 +462,6 @@ class _TrainCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // المنتصف (القطار والمدة)
                     Expanded(
                       child: Column(
                         children: [
@@ -542,7 +528,6 @@ class _TrainCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // وقت الوصول
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -582,7 +567,6 @@ class _TrainCard extends StatelessWidget {
                   height: 1,
                 ),
                 const SizedBox(height: 14),
-                // السعر وزر الحجز
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

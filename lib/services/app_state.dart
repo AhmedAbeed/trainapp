@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,10 +18,8 @@ class AppState extends ChangeNotifier {
   StreamSubscription<DocumentSnapshot>? _bookingSubscription;
   StreamSubscription<QuerySnapshot>? _notificationsSubscription;
 
-  // لتجنب تكرار الإشعارات في نفس الجلسة
   final Set<String> _showedNotifIds = {};
 
-  /// ✅ كولباك لإظهار إشعار مرئي في الواجهة (SnackBar / Dialog)
   Function(String title, String body)? onNotificationReceived;
 
   final Map<String, TrainStatusInfo> _trainStatuses = {};
@@ -30,7 +28,6 @@ class AppState extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  // ================= Getters =================
   UserModel? get currentUser => _currentUser;
   Booking? get currentBooking => _currentBooking;
   bool get isAdmin => _isAdmin;
@@ -43,7 +40,6 @@ class AppState extends ChangeNotifier {
 
   TrainStatusInfo? getTrainStatus(String trainNumber) => _trainStatuses[trainNumber];
 
-  // ================= Setters =================
   void setDarkMode(bool value) {
     _isDarkMode = value;
     notifyListeners();
@@ -58,8 +54,6 @@ class AppState extends ChangeNotifier {
     _notificationsEnabled = value;
     notifyListeners();
   }
-
-  // ================= ✅ المستمعين (Listeners) =================
 
   void _startBookingListener(String bookingId) {
     _bookingSubscription?.cancel();
@@ -105,8 +99,6 @@ class AppState extends ChangeNotifier {
       }
     });
   }
-
-  // ================= ✅ المصادقة (Auth) =================
 
   Future<void> refreshUserData() async {
     final user = _auth.currentUser;
@@ -218,8 +210,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ================= ✅ الحجوزات (Booking) =================
-
   Future<void> loadLatestBooking() async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
@@ -290,8 +280,6 @@ class AppState extends ChangeNotifier {
       currentStopIndex: 0,
     );
   }
-
-  // ================= ✅ حالة القطارات (Train Status) =================
 
   Future<void> updateTrainStatusAndNotify({required String trainNumber, required String trainName, required TrainStatus newStatus, String reason = '', int delayMinutes = 0}) async {
     final statusStr = newStatus.toString().split('.').last;

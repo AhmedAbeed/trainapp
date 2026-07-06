@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -20,7 +20,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
   String _searchQuery = '';
   String _selectedRoute = 'الكل';
 
-  // الحصول على جميع المسارات المتاحة
   List<String> get _availableRoutes {
     final isArabic = context.read<AppState>().isArabic;
     final routes = <String>{};
@@ -35,13 +34,11 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
     return [allText, ...routeList];
   }
 
-  // Helper to get translated "All" text
   String _getAllText() {
     final isArabic = context.read<AppState>().isArabic;
     return isArabic ? 'الكل' : 'All';
   }
 
-  // Helper to update selectedRoute when language changes
   void _updateSelectedRouteOnLanguageChange() {
     if (_selectedRoute == 'الكل' || _selectedRoute == 'All') {
       setState(() {
@@ -69,7 +66,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
 
     setState(() {
       _filteredTrains = _allTrains.where((train) {
-        // فلترة حسب المسار
         if (_selectedRoute != _getAllText()) {
           final fromName = SampleData.getStationName(train.from, isArabic);
           final toName = SampleData.getStationName(train.to, isArabic);
@@ -77,7 +73,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
           if (route != _selectedRoute) return false;
         }
 
-        // فلترة حسب البحث
         if (_searchQuery.isNotEmpty) {
           final query = _searchQuery.toLowerCase();
           final trainNumber = train.trainNumber.toLowerCase();
@@ -96,7 +91,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
     });
   }
 
-  // دالة تنسيق الوقت مع ص/م أو AM/PM
   String _formatTime12Hour(String time) {
     final isArabic = context.read<AppState>().isArabic;
     try {
@@ -104,7 +98,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
       int hour = int.parse(parts[0]);
       final minute = parts[1];
 
-      // تحديد ص أو م / AM أو PM
       String period;
       if (isArabic) {
         period = hour >= 12 ? 'م' : 'ص';
@@ -120,26 +113,23 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
     }
   }
 
-  // ✅ دالة الحصول على فترة اليوم المصححة
   String _getTimePeriod(String time, bool isArabic) {
     try {
       final parts = time.split(':');
       int hour = int.parse(parts[0]);
 
       if (isArabic) {
-        // التصنيف العربي الصحيح
-        if (hour >= 0 && hour < 5) return 'ليلي';      // 12ص - 4:59ص
-        if (hour >= 5 && hour < 12) return 'صباحي';    // 5ص - 11:59ص
-        if (hour >= 12 && hour < 17) return 'ظهري';    // 12م - 4:59م
-        if (hour >= 17 && hour < 21) return 'مسائي';   // 5م - 8:59م
-        return 'ليلي';                                  // 9م - 11:59م
+        if (hour >= 0 && hour < 5) return 'ليلي';
+        if (hour >= 5 && hour < 12) return 'صباحي';
+        if (hour >= 12 && hour < 17) return 'ظهري';
+        if (hour >= 17 && hour < 21) return 'مسائي';
+        return 'ليلي';
       } else {
-        // التصنيف الإنجليزي الصحيح
-        if (hour >= 0 && hour < 5) return 'Night';     // 12am - 4:59am
-        if (hour >= 5 && hour < 12) return 'Morning';   // 5am - 11:59am
-        if (hour >= 12 && hour < 17) return 'Afternoon'; // 12pm - 4:59pm
-        if (hour >= 17 && hour < 21) return 'Evening';   // 5pm - 8:59pm
-        return 'Night';                                  // 9pm - 11:59pm
+        if (hour >= 0 && hour < 5) return 'Night';
+        if (hour >= 5 && hour < 12) return 'Morning';
+        if (hour >= 12 && hour < 17) return 'Afternoon';
+        if (hour >= 17 && hour < 21) return 'Evening';
+        return 'Night';
       }
     } catch (e) {
       return '';
@@ -178,7 +168,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
     final isArabic = appState.isArabic;
     final textDirection = isArabic ? TextDirection.rtl : TextDirection.ltr;
 
-    // Translated texts
     final appBarTitle = isArabic ? 'مواعيد القطارات' : 'Train Schedules';
     final searchHint = isArabic
         ? 'ابحث برقم القطار أو الاسم أو المحطة...'
@@ -200,13 +189,13 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
     return Directionality(
       textDirection: textDirection,
       child: Scaffold(
-        backgroundColor: isDark ? Colors.black : AppTheme.lightBgDefault, // ✅ حسب الوضع
+        backgroundColor: isDark ? Colors.black : AppTheme.lightBgDefault,
         appBar: AppBar(
           title: Text(
             appBarTitle,
             style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
           ),
-          backgroundColor: isDark ? Colors.black : AppTheme.lightBgDefault, // ✅ حسب الوضع
+          backgroundColor: isDark ? Colors.black : AppTheme.lightBgDefault,
           centerTitle: true,
           actions: [
             IconButton(
@@ -218,13 +207,11 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
         ),
         body: Column(
           children: [
-            // شريط البحث والفلتر
             Container(
               padding: const EdgeInsets.all(16),
-              color: isDark ? Colors.black : AppTheme.lightSurfacePrimary, // ✅ حسب الوضع
+              color: isDark ? Colors.black : AppTheme.lightSurfacePrimary,
               child: Column(
                 children: [
-                  // حقل البحث
                   Container(
                     decoration: BoxDecoration(
                       color: isDark
@@ -272,7 +259,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // فلتر المسارات
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -302,7 +288,7 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
                             backgroundColor: isDark
                                 ? Colors.grey.shade900
                                 : AppTheme.lightSurfaceSecondary,
-                            selectedColor: AppTheme.accentDefault, // ✅ أحمر زي ما كان
+                            selectedColor: AppTheme.accentDefault,
                             checkmarkColor: Colors.white,
                           ),
                         );
@@ -312,7 +298,6 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
                 ],
               ),
             ),
-            // عدد النتائج
             if (_filteredTrains.isNotEmpty)
               Padding(
                 padding:
@@ -333,14 +318,13 @@ class _AllTrainsScheduleScreenState extends State<AllTrainsScheduleScreen> {
                       Text(
                         '$searchResultsFor$_searchQuery"',
                         style: GoogleFonts.cairo(
-                          color: AppTheme.accentDefault, // ✅ أحمر زي ما كان
+                          color: AppTheme.accentDefault,
                           fontSize: 12,
                         ),
                       ),
                   ],
                 ),
               ),
-            // قائمة القطارات
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -433,13 +417,11 @@ class _TrainScheduleCard extends StatelessWidget {
     final arrivalColor = getPeriodColor(arrivalPeriod);
     final duration = train.duration;
 
-    // حساب عدد الساعات والدقائق
     String durationText = duration;
     if (!duration.contains(':')) {
       durationText = duration;
     }
 
-    // Stops text
     String stopsDisplay = '$stopsText ${train.stops.length}';
     if (!isArabic) {
       stopsDisplay =
@@ -476,7 +458,6 @@ class _TrainScheduleCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // رأس الكارد (رقم القطار واسمه)
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -494,7 +475,7 @@ class _TrainScheduleCard extends StatelessWidget {
                   padding:
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppTheme.accentDefault, // ✅ أحمر زي ما كان
+                    color: AppTheme.accentDefault,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -519,7 +500,6 @@ class _TrainScheduleCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // أيقونة القطار
                 Icon(
                   Icons.train,
                   color: isDark ? Colors.grey.shade500 : AppTheme.accentDefault,
@@ -528,12 +508,10 @@ class _TrainScheduleCard extends StatelessWidget {
               ],
             ),
           ),
-          // محتوى الكارد
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // المسار
                 Container(
                   padding:
                   const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -570,10 +548,8 @@ class _TrainScheduleCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // مواعيد الانطلاق والوصول
                 Row(
                   children: [
-                    // وقت الانطلاق
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(12),
@@ -632,7 +608,6 @@ class _TrainScheduleCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // مدة الرحلة
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
@@ -652,7 +627,7 @@ class _TrainScheduleCard extends StatelessWidget {
                             style: GoogleFonts.cairo(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.accentDefault, // ✅ أحمر زي ما كان
+                              color: AppTheme.accentDefault,
                             ),
                           ),
                           Text(
@@ -668,7 +643,6 @@ class _TrainScheduleCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // وقت الوصول
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(12),
@@ -729,7 +703,6 @@ class _TrainScheduleCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                // محطات التوقف
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(

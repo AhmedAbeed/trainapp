@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,8 +27,7 @@ class _ConductorDashboardState extends State<ConductorDashboard>
   final List<IncidentReport> _incidentReports = [];
 
   String _filter = 'الكل';
-  final _filters = ['الكل', 'صالحة', 'تم التحقق', 'غير صالحة'];
-
+  final _filters = ['الكل', 'صالحة', 'تم التحقق'];
   late TabController _tabController;
 
   int _currentPassengersCount = 0;
@@ -106,7 +105,6 @@ class _ConductorDashboardState extends State<ConductorDashboard>
     }
   }
 
-  // ✅ Added missing getters to fix build errors
   List<PassengerOnboard> get _filteredPassengersByTrain => _passengersOnboard;
   List<IncidentReport> get _filteredReportsByTrain => _incidentReports;
 
@@ -336,8 +334,6 @@ class _ConductorDashboardState extends State<ConductorDashboard>
                 children: [
                   _infoBox(isArabic ? 'عدد التذاكر' : 'Tickets Count', '${_allBookings.length}', AppTheme.accentDefault),
                   _infoBox(isArabic ? 'ركاب حالياً' : 'Current Passengers', '$_currentPassengersCount', AppTheme.successGreen),
-                  _infoBox(isArabic ? 'غادروا' : 'Departed', '$_departedPassengersCount', AppTheme.warningAmber),
-                  _infoBox(isArabic ? 'متبقي' : 'Remaining', '${_totalSeats - _currentPassengersCount}', AppTheme.infoBlue),
                 ],
               ),
             ),
@@ -419,18 +415,6 @@ class _ConductorDashboardState extends State<ConductorDashboard>
   }
 
   Widget _buildTicketsTab(bool isDark, bool isArabic) {
-    if (_filteredBookings.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.confirmation_number_outlined, size: 64, color: AppTheme.textSecondary),
-            const SizedBox(height: 16),
-            Text(isArabic ? 'لا توجد تذاكر على هذا القطار' : 'No tickets for this train', style: GoogleFonts.cairo(color: AppTheme.textSecondary)),
-          ],
-        ),
-      );
-    }
     return Column(
       children: [
         SizedBox(
@@ -456,7 +440,18 @@ class _ConductorDashboardState extends State<ConductorDashboard>
         ),
         const SizedBox(height: 10),
         Expanded(
-          child: ListView.builder(
+          child: _filteredBookings.isEmpty
+              ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.confirmation_number_outlined, size: 64, color: AppTheme.textSecondary),
+                const SizedBox(height: 16),
+                Text(isArabic ? 'لا توجد تذاكر في هذا الفلتر' : 'No tickets in this filter', style: GoogleFonts.cairo(color: AppTheme.textSecondary)),
+              ],
+            ),
+          )
+              : ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: _filteredBookings.length,
             itemBuilder: (_, i) {
@@ -568,8 +563,23 @@ class _TicketCard extends StatelessWidget {
         children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Expanded(child: Text(booking.passengerName, style: GoogleFonts.cairo(color: AppTheme.textPrimary, fontSize: 15, fontWeight: FontWeight.w700))), _StatusBadge(status: booking.status, isArabic: isArabic)]),
           const SizedBox(height: 8),
-          Row(children: [Expanded(child: Text(booking.ticketNumber, style: GoogleFonts.inter(color: AppTheme.textSecondary, fontSize: 12))), const SizedBox(width: 12), Text('${isArabic ? "مقعد" : "Seat"} ${booking.seatNumber}', style: GoogleFonts.cairo(color: AppTheme.textSecondary, fontSize: 12))]),
-          const SizedBox(height: 12),
+          Row(children: [
+            Expanded(child: Text(booking.ticketNumber, style: GoogleFonts.inter(color: AppTheme.textSecondary, fontSize: 12))),
+            const SizedBox(width: 12),
+            Text('${isArabic ? "مقعد" : "Seat"} ${booking.seatNumber}', style: GoogleFonts.cairo(color: AppTheme.textSecondary, fontSize: 12)),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppTheme.accentDefault.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                booking.seatClass,
+                style: GoogleFonts.cairo(color: AppTheme.accentDefault, fontSize: 11, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ]),          const SizedBox(height: 12),
           if (booking.status == BookingStatus.valid) SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: onScan, icon: const Icon(Icons.qr_code_scanner, size: 16), label: Text(isArabic ? 'صعود' : 'Board'), style: ElevatedButton.styleFrom(backgroundColor: AppTheme.accentDefault, padding: const EdgeInsets.symmetric(vertical: 10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))))),
         ],
       ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,13 +37,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final auth = FirebaseAuth.instance;
       final firestore = FirebaseFirestore.instance;
 
-      // ✅ إنشاء حساب في Firebase Auth
       final userCredential = await auth.createUserWithEmailAndPassword(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text.trim(),
       );
 
-      // ✅ حفظ البيانات في Firestore
       await firestore.collection('users').doc(userCredential.user!.uid).set({
         'name': _nameCtrl.text.trim(),
         'email': _emailCtrl.text.trim(),
@@ -54,10 +52,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (!mounted) return;
 
-      // ✅ تحديث AppState بالبيانات
       final appState = context.read<AppState>();
 
-      // ✅ استخدام الدالة الصحيحة لتسجيل الدخول بعد التسجيل
       await appState.registerAndLogin(
         _nameCtrl.text.trim(),
         _emailCtrl.text.trim(),
@@ -66,7 +62,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       if (!mounted) return;
-      // ✅ التوجه لصفحة الحجز (Tab 2)
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen(initialTab: 2)),

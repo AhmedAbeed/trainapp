@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -76,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? AppTheme.darkBgDefault
                     : AppTheme.lightBgDefault,
                 actions: [
-                  // أيقونة الإشعارات فقط - تم إزالة أيقونة تغيير اللغة
                   if (appState.notificationsEnabled)
                     IconButton(
                       icon: const Icon(Icons.notifications_outlined),
@@ -171,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return isArabic ? 'تذكرتي' : 'My Ticket';
       case 1:
-        return ''; // TrackScreen has its own appbar
+        return '';
       case 2:
         return isArabic ? 'احجز رحلتك' : 'Book Your Trip';
       case 3:

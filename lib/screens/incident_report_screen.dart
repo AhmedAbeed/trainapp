@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -6,9 +6,9 @@ import '../models/models.dart';
 import '../services/app_state.dart';
 
 class IncidentReportScreen extends StatefulWidget {
-  final TrainSchedule? selectedTrain; // ✅ تم الإضافة
+  final TrainSchedule? selectedTrain;
 
-  const IncidentReportScreen({super.key, this.selectedTrain}); // ✅ تم الإضافة
+  const IncidentReportScreen({super.key, this.selectedTrain});
 
   @override
   State<IncidentReportScreen> createState() => _IncidentReportScreenState();
@@ -20,13 +20,12 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
   final _nationalIdCtrl = TextEditingController();
   String? _selectedStation;
   String? _selectedViolation;
-  String? _selectedTrainNumber; // ✅ رقم القطار
+  String? _selectedTrainNumber;
   final _descriptionCtrl = TextEditingController();
   bool _isLoading = false;
 
   List<String> _trainNumbers = [];
 
-  // قائمة المخالفات المقترحة
   final List<String> _violationTypes = [
     'السب والشتم',
     'الاعتداء بالضرب',
@@ -43,7 +42,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
     super.initState();
     _loadTrainNumbers();
 
-    // ✅ إذا كان هناك قطار محدد مسبقاً
     if (widget.selectedTrain != null) {
       _selectedTrainNumber = widget.selectedTrain!.trainNumber;
     }
@@ -72,7 +70,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
   }
 
   void _submitReport() {
-    // التحقق من صحة البيانات
     if (!_formKey.currentState!.validate()) return;
     if (_selectedTrainNumber == null) {
       _showSnackBar('يرجى اختيار رقم القطار', AppTheme.warningAmber);
@@ -89,7 +86,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
     setState(() => _isLoading = true);
 
-    // إنشاء المحضر بالبيانات اللي دخلها المستخدم
     final report = IncidentReport(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       reportNumber: 'IR-${DateTime.now().millisecondsSinceEpoch}',
@@ -102,10 +98,9 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
           : _descriptionCtrl.text.trim(),
       createdAt: DateTime.now(),
       resolved: false,
-      trainNumber: _selectedTrainNumber!, // ✅ تم الإضافة
+      trainNumber: _selectedTrainNumber!,
     );
 
-    // الرجوع بالبيانات إلى الشاشة السابقة
     Navigator.pop(context, report);
     setState(() => _isLoading = false);
   }
@@ -126,7 +121,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
     final isArabic = appState.isArabic;
     final isDark = appState.isDarkMode;
 
-    // قائمة المحطات
     final stations = SampleData.stations
         .map((station) => SampleData.getStationName(station, isArabic))
         .toList();
@@ -167,7 +161,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // رقم القطار
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -235,7 +228,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
                 const SizedBox(height: 16),
 
-                // بطاقة معلومات المخالف
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -303,7 +295,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
                 const SizedBox(height: 16),
 
-                // موقع المخالفة
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -361,7 +352,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
                 const SizedBox(height: 16),
 
-                // نوع المخالفة
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -432,7 +422,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
                 const SizedBox(height: 16),
 
-                // وصف المخالفة
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -487,7 +476,6 @@ class _IncidentReportScreenState extends State<IncidentReportScreen> {
 
                 const SizedBox(height: 24),
 
-                // زر الحفظ
                 SizedBox(
                   width: double.infinity,
                   height: 50,

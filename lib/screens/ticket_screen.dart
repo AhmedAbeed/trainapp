@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -18,7 +18,6 @@ class _TicketScreenState extends State<TicketScreen> {
   @override
   void initState() {
     super.initState();
-    // البدء بالاستماع لحالة القطار بمجرد فتح الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _listenToTrainStatus();
     });
@@ -29,14 +28,12 @@ class _TicketScreenState extends State<TicketScreen> {
     final trainNumber = appState.currentBooking?.trainNumber;
     if (trainNumber == null) return;
 
-    // استماع لحظي لتحديثات حالة القطار من Firestore
     FirebaseFirestore.instance
         .collection('train_statuses')
         .doc(trainNumber)
         .snapshots()
         .listen((snap) {
       if (snap.exists && mounted) {
-        // تحديث البيانات في AppState لتعكس الحالة الجديدة في كل التطبيق
         final data = snap.data() as Map<String, dynamic>;
         final statusStr = data['status'] ?? 'running';
         TrainStatus status = TrainStatus.running;
@@ -46,7 +43,6 @@ class _TicketScreenState extends State<TicketScreen> {
           case 'accident': status = TrainStatus.accident; break;
         }
         
-        // تحديث محلي سريع للـ UI
         setState(() {});
       }
     });

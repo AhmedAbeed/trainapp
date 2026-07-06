@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -28,7 +28,6 @@ class ProfileScreen extends StatelessWidget {
               pinned: true,
               backgroundColor: isDark ? AppTheme.darkBgDefault : AppTheme.lightBgDefault,
               actions: [
-                // ✅ زر اختيار اللغة في AppBar
                 Container(
                   margin: const EdgeInsets.only(right: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -72,7 +71,6 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Avatar
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
@@ -144,7 +142,6 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    // Personal info
                     _Section(
                       title: isArabic ? 'البيانات الشخصية' : 'Personal Information',
                       isDark: isDark,
@@ -172,7 +169,6 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
-                    // Settings
                     _Section(
                       title: isArabic ? 'الإعدادات' : 'Settings',
                       isDark: isDark,
@@ -189,7 +185,6 @@ class ProfileScreen extends StatelessWidget {
                           initial: appState.notificationsEnabled,
                           isDark: isDark,
                         ),
-                        // ✅ ملاحظة: زر اللغة موجود في AppBar وليس هنا
                         _ToggleTile(
                           icon: Icons.dark_mode_outlined,
                           label: isArabic ? 'الوضع الداكن' : 'Dark Mode',
@@ -204,7 +199,6 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
-                    // Support
                     _Section(
                       title: isArabic ? 'الدعم' : 'Support',
                       isDark: isDark,

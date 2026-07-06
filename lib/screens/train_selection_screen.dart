@@ -1,11 +1,13 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../services/app_state.dart';
 import '../models/models.dart';
 import 'conductor_dashboard.dart';
-import 'train_status_manager_screen.dart'; // ✅ أضف هذا الاستيراد
+import 'train_status_manager_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'login_screen.dart';
 
 class TrainSelectionScreen extends StatefulWidget {
   const TrainSelectionScreen({super.key});
@@ -15,6 +17,30 @@ class TrainSelectionScreen extends StatefulWidget {
 }
 
 class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
+  void _showLogoutDialog(BuildContext context) {
+    final isArabic = context.read<AppState>().isArabic;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(isArabic ? 'تسجيل الخروج' : 'Logout', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        content: Text(isArabic ? 'هل أنت متأكد من رغبتك في تسجيل الخروج؟' : 'Are you sure you want to logout?', style: GoogleFonts.cairo()),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(isArabic ? 'إلغاء' : 'Cancel', style: GoogleFonts.cairo())),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await FirebaseAuth.instance.signOut();
+              if (!ctx.mounted) return;
+              ctx.read<AppState>().logout();
+              Navigator.pushAndRemoveUntil(ctx, MaterialPageRoute(builder: (_) => const LoginScreen()), (route) => false);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(isArabic ? 'تسجيل خروج' : 'Logout', style: GoogleFonts.cairo(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
   List<TrainSchedule> _allTrains = [];
   List<TrainSchedule> _filteredTrains = [];
   bool _isLoading = true;
@@ -39,7 +65,6 @@ class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
     setState(() => _isLoading = true);
     _allTrains = SampleData.getAllTrains();
 
-    // إزالة التكرارات حسب رقم القطار
     final seen = <String>{};
     _allTrains = _allTrains.where((train) {
       if (seen.contains(train.trainNumber)) {
@@ -110,11 +135,14 @@ class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
               icon: const Icon(Icons.refresh),
               onPressed: _loadTrains,
             ),
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.red),
+              onPressed: () => _showLogoutDialog(context),
+            ),
           ],
         ),
         body: Column(
           children: [
-            // ✅ زر إدارة حالات القطارات (في الأعلى)
             Container(
               margin: const EdgeInsets.all(16),
               child: Card(
@@ -192,7 +220,6 @@ class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
               ),
             ),
 
-            // شريط البحث
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               color: isDark
@@ -249,7 +276,6 @@ class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
 
             const SizedBox(height: 8),
 
-            // نص توضيحي
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -275,7 +301,6 @@ class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
 
             const SizedBox(height: 8),
 
-            // عنوان القائمة
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -304,7 +329,6 @@ class _TrainSelectionScreenState extends State<TrainSelectionScreen> {
 
             const SizedBox(height: 8),
 
-            // قائمة القطارات
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())

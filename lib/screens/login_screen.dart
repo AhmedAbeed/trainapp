@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen>
     _logoScale = CurvedAnimation(parent: _logoAnim, curve: Curves.elasticOut);
     _logoAnim.forward();
 
-    // ✅ تسجيل خروج تلقائي عند فتح التطبيق عشان يظهر Login
     FirebaseAuth.instance.signOut();
   }
 
@@ -71,7 +70,6 @@ class _LoginScreenState extends State<LoginScreen>
         await state.loginAsAdmin(_emailCtrl.text, _passCtrl.text);
 
         if (!mounted) return;
-        // ✅ بعد تسجيل الدخول - نروح لشاشة اختيار القطار (للكوميسيري)
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const TrainSelectionScreen()),
@@ -89,7 +87,6 @@ class _LoginScreenState extends State<LoginScreen>
             .get();
         final userData = userDoc.data();
 
-        // ✅ جلب عدد الحجوزات فقط لمعرفة إذا كان المستخدم لديه حجز
         final bookingsCount = await firestore
             .collection('bookings')
             .where('userId', isEqualTo: userCredential.user!.uid)
@@ -101,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen>
         if (!mounted) return;
         final state = context.read<AppState>();
 
-        // ✅ loginWithNameAndEmailAndBooking يستدعي loadLatestBooking تلقائياً
         if (userData != null && userData['name'] != null) {
           await state.loginWithNameAndEmailAndBooking(
             userData['name'],
@@ -162,7 +158,6 @@ class _LoginScreenState extends State<LoginScreen>
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

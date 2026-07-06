@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -68,7 +68,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
       final statusString = _selectedStatus.toString().split('.').last;
       final isArabic = context.read<AppState>().isArabic;
 
-      // ✅ 1. حفظ الحالة في train_statuses (ليظهر للجميع فوراً)
       await _firestore
           .collection('train_statuses')
           .doc(_selectedTrainNumber)
@@ -80,7 +79,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      // ✅ 2. جلب كل الحجوزات (valid + scanned) مش بس valid
       final bookingsSnapshot = await _firestore
           .collection('bookings')
           .where('trainNumber', isEqualTo: _selectedTrainNumber)
@@ -92,7 +90,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
       final notificationBody = _getNotificationBody(
           statusString, _reasonCtrl.text, _delayMinutes, isArabic);
 
-      // ✅ 3. حفظ إشعار لكل مستخدم باستخدام batch لضمان الأداء
       final batch = _firestore.batch();
       final seenUserIds = <String>{};
       int notificationsCount = 0;
@@ -118,16 +115,14 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
         await batch.commit();
       }
 
-      // ✅ 4. تحديث AppState (المحلي)
       context.read<AppState>().updateTrainStatusAndNotify(
         trainNumber: _selectedTrainNumber!,
-        trainName: _selectedTrainNumber!, // أو اسم القطار لو متوفر
+        trainName: _selectedTrainNumber!,
         newStatus: _selectedStatus!,
         reason: _reasonCtrl.text,
         delayMinutes: _delayMinutes ?? 0,
       );
 
-      // ✅ إظهار إشعار محلي للمستخدم الحالي (الكوميسيري)
       await NotificationHelper.showNotification(
         id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: notificationTitle,
@@ -297,7 +292,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ✅ إحصائيات القطارات
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -334,7 +328,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
 
               const SizedBox(height: 20),
 
-              // ✅ اختيار القطار
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -399,7 +392,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
 
               const SizedBox(height: 16),
 
-              // ✅ اختيار الحالة الجديدة
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -463,7 +455,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
                 ),
               ),
 
-              // ✅ مدة التأخير
               if (_selectedStatus == TrainStatus.delayed) ...[
                 const SizedBox(height: 16),
                 Container(
@@ -511,7 +502,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
                 ),
               ],
 
-              // ✅ سبب التغيير
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -555,7 +545,6 @@ class _TrainStatusManagerScreenState extends State<TrainStatusManagerScreen> {
 
               const SizedBox(height: 30),
 
-              // ✅ زر التحديث
               SizedBox(
                 width: double.infinity,
                 height: 55,

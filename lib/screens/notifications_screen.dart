@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +26,6 @@ class NotificationsScreen extends StatelessWidget {
               ? AppTheme.darkBgDefault
               : AppTheme.lightBgDefault,
           actions: [
-            // زر لحذف كل الإشعارات
             TextButton.icon(
               onPressed: () async {
                 if (userId != null) {
@@ -135,7 +134,6 @@ class NotificationsScreen extends StatelessWidget {
                         status: data['status'] ?? 'info',
                         trainNumber: data['trainNumber'],
                         onTap: () async {
-                          // تحديث حالة القراءة
                           if (!(data['isRead'] ?? false)) {
                             await doc.reference.update({'isRead': true});
                           }
@@ -206,7 +204,6 @@ class _NotificationCardState extends State<_NotificationCard> {
   Widget build(BuildContext context) {
     final isDark = Provider.of<AppState>(context).isDarkMode;
 
-    // تحديد اللون والأيقونة حسب نوع الإشعار
     Color getStatusColor() {
       switch (widget.status) {
         case 'delayed':
@@ -272,7 +269,6 @@ class _NotificationCardState extends State<_NotificationCard> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // أيقونة الإشعار
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -293,7 +289,6 @@ class _NotificationCardState extends State<_NotificationCard> {
                   ),
                   const SizedBox(width: 16),
 
-                  // المحتوى
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,7 +380,6 @@ class _NotificationCardState extends State<_NotificationCard> {
                 ],
               ),
             ),
-            // زر التوسيع
             if (widget.message.length > 100)
               Container(
                 decoration: BoxDecoration(

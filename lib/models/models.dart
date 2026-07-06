@@ -1,5 +1,4 @@
-// User Model
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class UserModel {
   final String id;
@@ -17,7 +16,6 @@ class UserModel {
   });
 }
 
-// Station Model
 class Station {
   final String id;
   final String name;
@@ -32,7 +30,6 @@ class Station {
   });
 }
 
-// Train Model
 class TrainSchedule {
   final String id;
   final String trainNumber;
@@ -45,7 +42,7 @@ class TrainSchedule {
   final List<Station> stops;
   final Map<String, int> prices;
   final Map<String, int> availableSeats;
-  final TrainStatus? currentStatus; // ✅ الحالة الحالية للقطار
+  final TrainStatus? currentStatus;
 
   TrainSchedule({
     required this.id,
@@ -59,10 +56,9 @@ class TrainSchedule {
     required this.stops,
     required this.prices,
     required this.availableSeats,
-    this.currentStatus, // ✅ أضف السطر ده
+    this.currentStatus,
   });
 
-  // ✅ دالة لنسخ القطار مع تغيير الحالة فقط
   TrainSchedule copyWithStatus(TrainStatus newStatus) {
     return TrainSchedule(
       id: id,
@@ -81,7 +77,6 @@ class TrainSchedule {
   }
 }
 
-// Incident Report Model
 class IncidentReport {
   final String id;
   final String reportNumber;
@@ -108,7 +103,6 @@ class IncidentReport {
   });
 }
 
-// Booking Model
 class Booking {
   final String bookingId;
   final String ticketNumber;
@@ -149,11 +143,8 @@ class Booking {
 
 enum BookingStatus { valid, scanned, invalid }
 
-// Sample Data
 class SampleData {
-  // خريطة كاملة لتحويل الأسماء من عربي إلى إنجليزي (جميع المحطات)
   static final Map<String, String> stationNameEn = {
-    // المحطات الرئيسية
     'القاهرة': 'Cairo',
     'الجيزة': 'Giza',
     'بنها': 'Banha',
@@ -166,7 +157,6 @@ class SampleData {
     'بورسعيد': 'Port Said',
     'السويس': 'Suez',
     'سوهاج': 'Sohag',
-    // محطات إضافية
     'طلخا': 'Talkha',
     'سمنود': 'Samanoud',
     'المحلة الكبرى': 'El Mahalla El Kubra',
@@ -220,7 +210,6 @@ class SampleData {
     'التبين': 'El Tebin',
   };
 
-  // خريطة لتحويل أسماء القطارات
   static final Map<String, String> trainNameEn = {
     'خاص': 'Special',
     'روسي': 'Russian',
@@ -230,20 +219,16 @@ class SampleData {
     'تالجو': 'Talgo',
   };
 
-  // خريطة لتحويل أسماء الدرجات
   static final Map<String, String> classNameEn = {
     'درجة أولى': 'First Class',
     'درجة ثانية': 'Second Class',
     'درجة ثالثة': 'Third Class',
   };
-  // أضف هذه الدوال داخل class SampleData
 
-// ✅ دالة لجلب قائمة أسماء القطارات (للاستخدام في Dropdown)
   static List<String> getTrainNumbers() {
     return _allTrains.map((train) => train.trainNumber).toList();
   }
 
-// ✅ دالة لجلب قائمة أسماء القطارات مع التفاصيل
   static List<Map<String, String>> getTrainsList(bool isArabic) {
     final List<Map<String, String>> result = [];
     final seenNumbers = <String>{};
@@ -262,7 +247,6 @@ class SampleData {
     return result;
   }
 
-// ✅ دالة لجلب قطار معين برقمه
   static TrainSchedule? getTrainByNumber(String trainNumber) {
     try {
       return _allTrains.firstWhere((train) => train.trainNumber == trainNumber);
@@ -271,7 +255,6 @@ class SampleData {
     }
   }
 
-  // المحطات الرئيسية فقط للمستخدم (للقائمة المنسدلة)
   static final List<Station> mainStations = [
     Station(id: 's1', name: 'القاهرة', lat: 30.0626, lng: 31.2497),
     Station(id: 's2', name: 'الجيزة', lat: 30.0126, lng: 31.2119),
@@ -287,7 +270,6 @@ class SampleData {
     Station(id: 's12', name: 'سوهاج', lat: 26.5591, lng: 31.6956),
   ];
 
-  // جميع المحطات (بما فيها التفصيلية) - تستخدم فقط لمحطات التوقف
   static final List<Station> allStations = [
     Station(id: 's1', name: 'القاهرة', lat: 30.0626, lng: 31.2497),
     Station(id: 's2', name: 'الجيزة', lat: 30.0126, lng: 31.2119),
@@ -354,15 +336,12 @@ class SampleData {
     Station(id: 's63', name: 'التبين', lat: 29.8667, lng: 31.3167),
   ];
 
-  // ✅ للحفاظ على التوافق مع الكود القديم
   static List<Station> get stations => mainStations;
 
-  // دالة لجلب أسماء المحطات الرئيسية فقط (للقائمة المنسدلة)
   static List<String> getStationNames(bool isArabic) {
     return mainStations.map((s) => getStationName(s, isArabic)).toList();
   }
 
-  // دالة لجلب اسم المحطة مترجماً
   static String getStationName(Station station, bool isArabic) {
     if (isArabic) {
       return station.name;
@@ -371,7 +350,6 @@ class SampleData {
     }
   }
 
-  // دالة لجلب اسم القطار مترجماً
   static String getTrainName(String arabicName, bool isArabic) {
     if (isArabic) {
       return arabicName;
@@ -380,7 +358,6 @@ class SampleData {
     }
   }
 
-  // دالة لجلب اسم الدرجة مترجماً
   static String getClassName(String arabicName, bool isArabic) {
     if (isArabic) {
       return arabicName;
@@ -389,7 +366,6 @@ class SampleData {
     }
   }
 
-  // ✅ دالة getStation - مهمة للتوافق مع الكود القديم
   static Station getStation(String name) {
     final station = allStations.firstWhere(
       (s) => s.name == name,
@@ -398,7 +374,6 @@ class SampleData {
     return station;
   }
 
-  // دالة لجلب المحطة من الاسم (للاستخدام الداخلي)
   static Station getStationByName(String name) {
     final station = allStations.firstWhere(
       (s) => s.name == name,
@@ -407,18 +382,14 @@ class SampleData {
     return station;
   }
 
-  // ✅ الدالة الرئيسية للبحث عن القطارات - تدعم العربية والإنجليزية
   static List<TrainSchedule> getTrains(String from, String to) {
     return _allTrains.where((train) {
-      // الاسم العربي للمحطة
       final fromAr = train.from.name;
       final toAr = train.to.name;
 
-      // الاسم الإنجليزي للمحطة
       final fromEn = stationNameEn[fromAr] ?? fromAr;
       final toEn = stationNameEn[toAr] ?? toAr;
 
-      // التحقق من المطابقة (سواء كان الإدخال عربي أو إنجليزي)
       final fromMatches = (from == fromAr) || (from == fromEn);
       final toMatches = (to == toAr) || (to == toEn);
 
@@ -426,7 +397,6 @@ class SampleData {
     }).toList();
   }
 
-  // دالة مساعدة لإنشاء قائمة المحطات من الأسماء (تستخدم allStations)
   static List<Station> _createStops(List<String> stopNames) {
     return stopNames.map((name) {
       final station = allStations.firstWhere(
@@ -438,7 +408,6 @@ class SampleData {
   }
 
   static final List<TrainSchedule> _allTrains = [
-    // ==================== المنصورة ← الإسكندرية ====================
     TrainSchedule(
       id: 'mans_alex_1',
       trainNumber: '584-585',
@@ -463,10 +432,9 @@ class SampleData {
       ]),
       prices: {'درجة أولى': 150, 'درجة ثانية': 95, 'درجة ثالثة': 55},
       availableSeats: {'درجة أولى': 25, 'درجة ثانية': 50, 'درجة ثالثة': 100},
-      currentStatus: null, // ✅ القيمة الافتراضية null
+      currentStatus: null,
     ),
 
-    // ==================== القاهرة ← الإسكندرية (قطار 1) ====================
     TrainSchedule(
       id: 'cai_alex_1',
       trainNumber: '1',
@@ -497,7 +465,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // ==================== الإسكندرية ← القاهرة ====================
     TrainSchedule(
       id: 'alex_cai_1',
       trainNumber: '2',
@@ -527,7 +494,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // ==================== القاهرة ← أسوان ====================
     TrainSchedule(
       id: 'cai_asw_1',
       trainNumber: '80',
@@ -575,7 +541,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // ==================== القاهرة ← أسيوط ====================
     TrainSchedule(
       id: 'cai_asyt_1',
       trainNumber: '158',
@@ -609,7 +574,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // ==================== القاهرة ← بنها ====================
     TrainSchedule(
       id: 'cai_bnha_1',
       trainNumber: '15',
@@ -625,7 +589,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // ==================== قطارات إضافية ====================
     TrainSchedule(
       id: 'cai_alex_2',
       trainNumber: '2007',
@@ -727,7 +690,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // الإسكندرية ← القاهرة (قطارات إضافية)
     TrainSchedule(
       id: 'alex_cai_2',
       trainNumber: '2008',
@@ -801,7 +763,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // القاهرة ← أسوان (قطارات إضافية)
     TrainSchedule(
       id: 'cai_asw_2',
       trainNumber: '1004',
@@ -892,7 +853,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // أسوان ← القاهرة
     TrainSchedule(
       id: 'asw_cai_1',
       trainNumber: '81',
@@ -920,7 +880,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // المنصورة ← الإسكندرية الإضافية
     TrainSchedule(
       id: 'mans_alex_2',
       trainNumber: '566-567',
@@ -961,7 +920,6 @@ class SampleData {
       currentStatus: null,
     ),
 
-    // الإسكندرية ← المنصورة
     TrainSchedule(
       id: 'alex_mans_1',
       trainNumber: '586-587',
@@ -1146,7 +1104,6 @@ class SampleData {
   }
 }
 
-// ==================== دوال مساعدة لتنسيق الوقت ====================
 String formatTimeWithPeriod(String time, bool isArabic) {
   try {
     final parts = time.split(':');
@@ -1188,7 +1145,6 @@ String getTimePeriod(String time, bool isArabic) {
   }
 }
 
-// ==================== حالة القطار (Train Status) ====================
 enum TrainStatus {
   running,
   delayed,

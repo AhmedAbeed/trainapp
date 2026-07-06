@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/app_state.dart';
 
 class IssueTicketScreen extends StatefulWidget {
@@ -20,7 +21,6 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
   final _nationalIdCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
 
-  // تخزين القيم بالعربي (الأصلي)
   String? _selectedFromStationAr;
   String? _selectedToStationAr;
   String? _selectedTrain;
@@ -109,7 +109,7 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
     }
   }
 
-  void _issueTicket() {
+  Future<void> _issueTicket() async {
     final isArabic = context.read<AppState>().isArabic;
 
     if (!_formKey.currentState!.validate()) return;
@@ -158,7 +158,32 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
       currentStopIndex: 0,
     );
 
-    Navigator.pop(context, booking);
+    try {
+      await FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(booking.bookingId)
+          .set({
+        'ticketNumber': booking.ticketNumber,
+        'passengerName': booking.passengerName,
+        'trainNumber': booking.trainNumber,
+        'trainName': booking.trainName,
+        'from': booking.from.name,
+        'to': booking.to.name,
+        'departureTime': booking.departureTime,
+        'arrivalTime': booking.arrivalTime,
+        'date': booking.date,
+        'seatClass': booking.seatClass,
+        'seatNumber': booking.seatNumber,
+        'price': booking.price,
+        'status': 'valid',
+        'userId': '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      debugPrint('❌ Error saving ticket: $e');
+    }
+
+    if (mounted) Navigator.pop(context, booking);
     setState(() => _isLoading = false);
   }
 
@@ -169,23 +194,19 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
     final isArabic = appState.isArabic;
     final textDirection = isArabic ? TextDirection.rtl : TextDirection.ltr;
 
-    // قائمة المحطات للعرض (مترجمة حسب اللغة)
     final stationNamesForDisplay = SampleData.mainStations
         .map((s) => SampleData.getStationName(s, isArabic))
         .toList();
 
-    // إيجاد القيمة المعروضة حالياً (المترجمة) من القيمة العربية المخزنة
     String? getDisplayValue(String? arabicValue) {
       if (arabicValue == null) return null;
       if (isArabic) return arabicValue;
       return SampleData.stationNameEn[arabicValue] ?? arabicValue;
     }
 
-    // الحصول على القيمة العربية من القيمة المعروضة
     String? getArabicValue(String? displayValue) {
       if (displayValue == null) return null;
       if (isArabic) return displayValue;
-      // البحث عن المفتاح العربي من القيمة المعروضة
       for (var entry in SampleData.stationNameEn.entries) {
         if (entry.value == displayValue) {
           return entry.key;
@@ -194,7 +215,6 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
       return displayValue;
     }
 
-    // النصوص المترجمة
     final appBarTitle = isArabic ? 'إصدار تذكرة جديدة' : 'Issue New Ticket';
     final passengerDataTitle = isArabic ? 'بيانات الراكب' : 'Passenger Data';
     final fullNameLabel = isArabic ? 'الاسم الكامل' : 'Full Name';
@@ -239,7 +259,6 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // بيانات الراكب
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -328,7 +347,6 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
 
                 const SizedBox(height: 16),
 
-                // مسار الرحلة
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -426,7 +444,6 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
                   ),
                 ),
 
-                // اختيار القطار
                 if (_availableTrains.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   Container(
@@ -465,7 +482,6 @@ class _IssueTicketScreenState extends State<IssueTicketScreen> {
                   ),
                 ],
 
-                // اختيار الدرجة والمقعد
                 if (_selectedTrain != null) ...[
                   const SizedBox(height: 16),
                   Container(

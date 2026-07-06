@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,7 +28,6 @@ class HelpScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              // Contact Us Section
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -65,7 +64,6 @@ class HelpScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // Email
                     _ContactCard(
                       icon: Icons.email_outlined,
                       title: isArabic ? 'البريد الإلكتروني' : 'Email',
@@ -75,7 +73,6 @@ class HelpScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // Response Time
                     _ContactCard(
                       icon: Icons.access_time_outlined,
                       title: isArabic ? 'مدة الرد' : 'Response Time',
@@ -85,7 +82,6 @@ class HelpScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // Working Hours
                     _ContactCard(
                       icon: Icons.work_outline,
                       title: isArabic ? 'ساعات العمل' : 'Working Hours',
@@ -101,7 +97,6 @@ class HelpScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Quick Help Section
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(

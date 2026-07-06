@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,18 +22,21 @@ class TrainBookingScreen extends StatefulWidget {
 class _TrainBookingScreenState extends State<TrainBookingScreen> {
   String? _selectedClass;
   int? _selectedSeatNumber;
-  final int _maxSeats = 50; 
   Set<int> _bookedSeats = {};
-  bool _isLoadingSeats = true;
+  bool _isLoadingSeats = false;
+
+  int get _maxSeats {
+    if (_selectedClass == null) return 50;
+    return widget.train.availableSeats[_selectedClass] ?? 50;
+  }
 
   @override
   void initState() {
     super.initState();
-    _loadBookedSeats();
   }
 
-  // ✅ جلب المقاعد المحجوزة لهذا القطار في هذا التاريخ
   Future<void> _loadBookedSeats() async {
+    if (_selectedClass == null) return;
     setState(() => _isLoadingSeats = true);
     try {
       final dateString = '${widget.date.day}/${widget.date.month}/${widget.date.year}';
@@ -41,6 +44,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen> {
           .collection('bookings')
           .where('trainNumber', isEqualTo: widget.train.trainNumber)
           .where('date', isEqualTo: dateString)
+          .where('seatClass', isEqualTo: _selectedClass)
           .where('status', whereIn: ['valid', 'scanned'])
           .get();
 
@@ -80,7 +84,6 @@ class _TrainBookingScreenState extends State<TrainBookingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header card
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -182,7 +185,6 @@ class _TrainBookingScreenState extends State<TrainBookingScreen> {
 
               const SizedBox(height: 24),
 
-              // Stops
               Text(
                 isArabic ? 'محطات التوقف' : 'Stops',
                 style: GoogleFonts.cairo(
@@ -254,7 +256,6 @@ class _TrainBookingScreenState extends State<TrainBookingScreen> {
 
               const SizedBox(height: 24),
 
-              // Select class
               Text(
                 isArabic ? 'اختر الدرجة' : 'Select Class',
                 style: GoogleFonts.cairo(
@@ -270,7 +271,14 @@ class _TrainBookingScreenState extends State<TrainBookingScreen> {
                 final selected = _selectedClass == cls;
 
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedClass = cls),
+                  onTap: () {
+                    setState(() {
+                      _selectedClass = cls;
+                      _selectedSeatNumber = null;
+                      _bookedSeats = {};
+                    });
+                    _loadBookedSeats();
+                  },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(bottom: 10),
@@ -351,7 +359,6 @@ class _TrainBookingScreenState extends State<TrainBookingScreen> {
 
               const SizedBox(height: 24),
 
-              // Select Seat Number
               if (_selectedClass != null) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

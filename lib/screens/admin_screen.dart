@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
@@ -23,7 +23,6 @@ class _AdminScreenState extends State<AdminScreen>
   final List<PassengerOnboard> _passengersOnboard = [];
   final List<IncidentReport> _incidentReports = [];
 
-  // متغيرات اختيار القطار
   TrainSchedule? _selectedTrain;
   List<TrainSchedule> _availableTrains = [];
   List<TrainSchedule> _filteredTrains = [];
@@ -38,7 +37,6 @@ class _AdminScreenState extends State<AdminScreen>
   int _departedPassengersCount = 0;
   final int _totalSeats = 180;
 
-
   @override
   void initState() {
     super.initState();
@@ -49,7 +47,6 @@ class _AdminScreenState extends State<AdminScreen>
 
   void _loadAvailableTrains() {
     _availableTrains = SampleData.getAllTrains();
-    // إزالة التكرارات حسب رقم القطار
     final seen = <String>{};
     _availableTrains = _availableTrains.where((train) {
       if (seen.contains(train.trainNumber)) {
@@ -61,7 +58,6 @@ class _AdminScreenState extends State<AdminScreen>
     }).toList();
     _filteredTrains = _availableTrains;
 
-    // طباعة عدد القطارات في الـ Terminal للتأكد
     debugPrint("========== 🚆 القطارات المتاحة للكومسري ==========");
     debugPrint("العدد الإجمالي: ${_availableTrains.length} قطار");
     for (var train in _availableTrains) {
@@ -95,7 +91,6 @@ class _AdminScreenState extends State<AdminScreen>
         _passengersOnboard.where((p) => p.hasDeparted).length;
   }
 
-  // جلب التذاكر الخاصة بالقطار المختار فقط
   List<Booking> get _filteredBookingsByTrain {
     if (_selectedTrain == null) return [];
     return _allBookings
@@ -126,7 +121,6 @@ class _AdminScreenState extends State<AdminScreen>
     }
   }
 
-  // جلب الركاب الخاصة بالقطار المختار فقط
   List<PassengerOnboard> get _filteredPassengersByTrain {
     if (_selectedTrain == null) return [];
     return _passengersOnboard
@@ -134,7 +128,6 @@ class _AdminScreenState extends State<AdminScreen>
         .toList();
   }
 
-  // جلب التقارير الخاصة بالقطار المختار فقط
   List<IncidentReport> get _filteredReportsByTrain {
     if (_selectedTrain == null) return [];
     return _incidentReports
@@ -491,7 +484,6 @@ class _AdminScreenState extends State<AdminScreen>
   Widget build(BuildContext context) {
     final isDark = context.watch<AppState>().isDarkMode;
 
-    // إذا لم يتم اختيار قطار بعد، نعرض شاشة اختيار القطار (بالألوان الجديدة مع بحث)
     if (!_trainSelected || _selectedTrain == null) {
       return Directionality(
         textDirection: TextDirection.rtl,
@@ -530,7 +522,6 @@ class _AdminScreenState extends State<AdminScreen>
             ),
             child: Column(
               children: [
-                // شريط البحث
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -561,7 +552,6 @@ class _AdminScreenState extends State<AdminScreen>
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // حقل البحث
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey.shade800,
@@ -602,7 +592,6 @@ class _AdminScreenState extends State<AdminScreen>
                     ],
                   ),
                 ),
-                // عدد النتائج
                 if (_filteredTrains.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -628,7 +617,6 @@ class _AdminScreenState extends State<AdminScreen>
                       ],
                     ),
                   ),
-                // قائمة القطارات
                 Expanded(
                   child: _filteredTrains.isEmpty
                       ? Center(
@@ -698,7 +686,6 @@ class _AdminScreenState extends State<AdminScreen>
                                   ),
                                   child: Row(
                                     children: [
-                                      // أيقونة القطار
                                       Container(
                                         width: 55,
                                         height: 55,
@@ -719,13 +706,11 @@ class _AdminScreenState extends State<AdminScreen>
                                         ),
                                       ),
                                       const SizedBox(width: 14),
-                                      // معلومات القطار
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            // رقم القطار والاسم
                                             Row(
                                               children: [
                                                 Container(
@@ -768,7 +753,6 @@ class _AdminScreenState extends State<AdminScreen>
                                               ],
                                             ),
                                             const SizedBox(height: 6),
-                                            // المحطات
                                             Row(
                                               children: [
                                                 Icon(Icons.location_on,
@@ -811,7 +795,6 @@ class _AdminScreenState extends State<AdminScreen>
                                               ],
                                             ),
                                             const SizedBox(height: 4),
-                                            // الوقت
                                             Row(
                                               children: [
                                                 Icon(Icons.access_time,
@@ -831,7 +814,6 @@ class _AdminScreenState extends State<AdminScreen>
                                           ],
                                         ),
                                       ),
-                                      // السهم الجانبي
                                       Container(
                                         width: 30,
                                         height: 30,
@@ -862,7 +844,6 @@ class _AdminScreenState extends State<AdminScreen>
       );
     }
 
-    // بعد اختيار القطار، نعرض لوحة التحكم الكاملة
     final currentPassengers =
         _filteredPassengersByTrain.where((p) => !p.hasDeparted).length;
     final totalSeatsForTrain = _totalSeats;

@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // ==================== الألوان الأساسية الثابتة ====================
 
-  // Dark Mode Colors
   static const Color darkBgDefault = Color(0xFF0B0B0C);
   static const Color darkSurfacePrimary = Color(0xFF1C1C1E);
   static const Color darkSurfaceSecondary = Color(0xFF2C2C2E);
@@ -12,7 +10,6 @@ class AppTheme {
   static const Color darkTextPrimary = Color(0xFFFFFFFF);
   static const Color darkTextSecondary = Color(0xFFA1A1AA);
 
-  // Light Mode Colors
   static const Color lightBgDefault = Color(0xFFF5F5F5);
   static const Color lightSurfacePrimary = Color(0xFFFFFFFF);
   static const Color lightSurfaceSecondary = Color(0xFFF0F0F0);
@@ -20,16 +17,11 @@ class AppTheme {
   static const Color lightTextPrimary = Color(0xFF1A1A1A);
   static const Color lightTextSecondary = Color(0xFF6B6B6B);
 
-  // Common Colors (ثابتة لكل الثيمات)
   static const Color accentDefault = Color(0xFFE52E36);
   static const Color accentPressed = Color(0xFFB11B22);
   static const Color successGreen = Color(0xFF00B884);
   static const Color warningAmber = Color(0xFFFFB800);
   static const Color infoBlue = Color(0xFF00A8E8);
-
-  // ==================== متغيرات الوضع الداكن (الافتراضي) ====================
-  // دي المتغيرات اللي بتستخدم في كل مكان في التطبيق
-  // وهي static const عشان تقدر تتعامل مع const widgets
 
   static const Color bgDefault = darkBgDefault;
   static const Color surfacePrimary = darkSurfacePrimary;
@@ -37,8 +29,6 @@ class AppTheme {
   static const Color surfaceTertiary = darkSurfaceTertiary;
   static const Color textPrimary = darkTextPrimary;
   static const Color textSecondary = darkTextSecondary;
-
-  // ==================== دوال الثيمات ====================
 
   static ThemeData get darkTheme {
     return ThemeData(
@@ -210,6 +200,5 @@ class AppTheme {
     );
   }
 
-  // الثيم الافتراضي (للتأكد من عدم وجود أخطاء)
   static ThemeData get theme => darkTheme;
 }

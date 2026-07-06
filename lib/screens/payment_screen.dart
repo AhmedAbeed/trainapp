@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,35 +29,82 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  int _paymentMethod = 0; // 0=card, 1=wallet, 2=cash
+  int _paymentMethod = 0;
   bool _isProcessing = false;
   final _cardCtrl = TextEditingController(text: '4242 4242 4242 4242');
   final _expiryCtrl = TextEditingController(text: '12/26');
   final _cvvCtrl = TextEditingController(text: '123');
 
+  bool _luhn(String number) {
+    final digits = number.replaceAll(' ', '').split('').map(int.parse).toList();
+    if (digits.length != 16) return false;
+    int sum = 0;
+    for (int i = 0; i < digits.length; i++) {
+      int d = digits[digits.length - 1 - i];
+      if (i % 2 == 1) { d *= 2; if (d > 9) d -= 9; }
+      sum += d;
+    }
+    return sum % 10 == 0;
+  }
+
+  bool _validExpiry(String expiry) {
+    final parts = expiry.split('/');
+    if (parts.length != 2) return false;
+    final month = int.tryParse(parts[0]);
+    final year = int.tryParse(parts[1]);
+    if (month == null || year == null) return false;
+    if (month < 1 || month > 12) return false;
+    final now = DateTime.now();
+    final exp = DateTime(2000 + year, month + 1);
+    return exp.isAfter(now);
+  }
+
   Future<void> _pay() async {
+    final appState = context.read<AppState>();
+    final isArabic = appState.isArabic;
+
+    if (_paymentMethod == 0) {
+      if (!_luhn(_cardCtrl.text)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(isArabic ? 'رقم البطاقة غير صحيح' : 'Invalid card number'),
+          backgroundColor: Colors.red,
+        ));
+        return;
+      }
+      if (!_validExpiry(_expiryCtrl.text)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(isArabic ? 'تاريخ انتهاء البطاقة غير صحيح أو منتهي' : 'Card expiry is invalid or expired'),
+          backgroundColor: Colors.red,
+        ));
+        return;
+      }
+      final cvv = _cvvCtrl.text.trim();
+      if (cvv.length != 3 || int.tryParse(cvv) == null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(isArabic ? 'CVV غير صحيح' : 'Invalid CVV'),
+          backgroundColor: Colors.red,
+        ));
+        return;
+      }
+    }
+
     setState(() => _isProcessing = true);
-    
-    // محاكاة وقت المعالجة
+
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
-
-    final appState = context.read<AppState>();
-    final isArabic = appState.isArabic;
     final String dateString = '${widget.date.day}/${widget.date.month}/${widget.date.year}';
 
     try {
-      // ✅ استخدام Firestore Transaction لضمان عدم حجز المقعد مرتين (Race Condition)
       final bookingId = 'BK-${DateTime.now().millisecondsSinceEpoch}';
       final bookingRef = FirebaseFirestore.instance.collection('bookings').doc(bookingId);
 
       await FirebaseFirestore.instance.runTransaction((transaction) async {
-        // 1. التحقق من توفر المقعد (قراءة)
         final conflictQuery = await FirebaseFirestore.instance
             .collection('bookings')
             .where('trainNumber', isEqualTo: widget.train.trainNumber)
             .where('date', isEqualTo: dateString)
+            .where('seatClass', isEqualTo: widget.selectedClass)
             .where('seatNumber', isEqualTo: widget.selectedSeatNumber)
             .where('status', whereIn: ['valid', 'scanned'])
             .get();
@@ -66,7 +113,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           throw Exception('SEAT_TAKEN');
         }
 
-        // 2. إذا كان متاحاً، يتم الحجز (كتابة)
         transaction.set(bookingRef, {
           'bookingId': bookingId,
           'ticketNumber': 'ENR-${widget.train.trainNumber}-S${widget.selectedSeatNumber}',
@@ -89,7 +135,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         });
       });
 
-      // نجح الحجز في Firestore، الآن نقوم بتحديث الحالة المحلية
       final booking = Booking(
         bookingId: bookingId,
         ticketNumber: 'ENR-${widget.train.trainNumber}-S${widget.selectedSeatNumber}',
@@ -109,16 +154,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
         currentStopIndex: 0,
       );
 
-      // حفظ في AppState (سيقوم بعمل set مكرر ولكنه يضمن مزامنة التنبيهات والـ Topic)
       await appState.saveAndSetBooking(booking);
 
       if (!mounted) return;
 
-      // التوجه إلى HomeScreen
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen(initialTab: 0)),
-        (r) => false,
+            (r) => false,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,12 +176,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
     } on Exception catch (e) {
       if (e.toString().contains('SEAT_TAKEN')) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(isArabic 
-              ? 'عذراً، المقعد ${widget.selectedSeatNumber} تم حجزه للتو. يرجى اختيار مقعد آخر.' 
+          content: Text(isArabic
+              ? 'عذراً، المقعد ${widget.selectedSeatNumber} تم حجزه للتو. يرجى اختيار مقعد آخر.'
               : 'Sorry, seat ${widget.selectedSeatNumber} was just booked. Please choose another seat.'),
           backgroundColor: Colors.red,
         ));
-        Navigator.pop(context); // العودة لصفحة اختيار المقاعد
+        Navigator.pop(context);
       } else {
         debugPrint('❌ Payment Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

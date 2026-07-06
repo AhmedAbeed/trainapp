@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -35,9 +35,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     _processTicket(value);
   }
 
-  /// ✅ معالجة التذكرة وتحديث البيانات في Firebase
   Future<void> _processTicket(String ticketData) async {
-    // تنسيق البيانات المتوقع: ticketNumber|passengerName|trainNumber
     final parts = ticketData.split('|');
     if (parts.length < 1) {
       _showResultDialog('خطأ', 'بيانات التذكرة غير صالحة', isError: true);
@@ -47,7 +45,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     final ticketNumber = parts[0];
     
     try {
-      // 1. البحث عن التذكرة في Firestore
       final query = await FirebaseFirestore.instance
           .collection('bookings')
           .where('ticketNumber', isEqualTo: ticketNumber)
@@ -70,13 +67,11 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         return;
       }
 
-      // 2. تحديث حالة التذكرة إلى 'scanned'
       await bookingDoc.reference.update({
         'status': 'scanned',
         'scannedAt': FieldValue.serverTimestamp(),
       });
 
-      // 3. إرسال إشعار للمستخدم (عبر مجموعة notifications المستمعة لحظياً)
       if (userId != null) {
         final isArabic = context.read<AppState>().isArabic;
         final title = isArabic ? '🎫 تم التحقق من تذكرتك' : '🎫 Ticket Verified';
@@ -149,7 +144,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             controller: _controller,
             onDetect: _onDetect,
           ),
-          // Scanner Overlay
           Center(
             child: Container(
               width: 250,

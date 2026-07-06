@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../models/models.dart';
 
 class TrainManagerService extends ChangeNotifier {
-  // خريطة لتخزين حالة كل قطار
   final Map<String, TrainStatus> _trainStatusMap = {};
   final Map<String, String> _trainStatusReason = {};
   final Map<String, int?> _trainDelayMinutes = {};
@@ -13,7 +12,6 @@ class TrainManagerService extends ChangeNotifier {
   List<TrainStatusLog> get statusLogs => _statusLogs;
   List<TrainNotification> get notifications => _notifications;
 
-  // تهيئة البيانات التجريبية
   void initializeTrains(List<TrainSchedule> trains) {
     for (var train in trains) {
       if (!_trainStatusMap.containsKey(train.trainNumber)) {
@@ -25,22 +23,18 @@ class TrainManagerService extends ChangeNotifier {
     notifyListeners();
   }
 
-  // الحصول على حالة قطار معين
   TrainStatus getTrainStatus(String trainNumber) {
     return _trainStatusMap[trainNumber] ?? TrainStatus.running;
   }
 
-  // الحصول على سبب الحالة
   String getTrainStatusReason(String trainNumber) {
     return _trainStatusReason[trainNumber] ?? 'القطار يعمل بشكل طبيعي';
   }
 
-  // الحصول على مدة التأخير
   int? getTrainDelay(String trainNumber) {
     return _trainDelayMinutes[trainNumber];
   }
 
-  // تحديث حالة القطار
   Future<void> updateTrainStatus({
     required String trainNumber,
     required String trainName,
@@ -52,15 +46,12 @@ class TrainManagerService extends ChangeNotifier {
             String userId, String userEmail, String title, String message)
         sendNotification,
   }) async {
-    // تسجيل الحالة القديمة
     final oldStatus = _trainStatusMap[trainNumber] ?? TrainStatus.running;
 
-    // تحديث الحالة
     _trainStatusMap[trainNumber] = newStatus;
     _trainStatusReason[trainNumber] = reason;
     _trainDelayMinutes[trainNumber] = delayMinutes;
 
-    // تسجيل في السجل
     final log = TrainStatusLog(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       trainNumber: trainNumber,
@@ -71,7 +62,6 @@ class TrainManagerService extends ChangeNotifier {
     );
     _statusLogs.insert(0, log);
 
-    // إرسال إشعارات للمستخدمين المتأثرين
     if (oldStatus != newStatus) {
       for (var user in affectedUsers) {
         final title = _getNotificationTitle(newStatus, trainNumber, trainName);
@@ -85,7 +75,6 @@ class TrainManagerService extends ChangeNotifier {
           message,
         );
 
-        // حفظ الإشعار محلياً
         _notifications.add(TrainNotification(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           userId: user['userId'],
@@ -130,12 +119,10 @@ class TrainManagerService extends ChangeNotifier {
     }
   }
 
-  // الحصول على إشعارات مستخدم معين
   List<TrainNotification> getUserNotifications(String userId) {
     return _notifications.where((n) => n.userId == userId).toList();
   }
 
-  // تحديث حالة قراءة الإشعار
   void markNotificationAsRead(String notificationId) {
     final index = _notifications.indexWhere((n) => n.id == notificationId);
     if (index != -1) {

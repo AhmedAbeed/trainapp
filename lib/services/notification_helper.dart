@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+﻿import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationHelper {
@@ -17,7 +17,6 @@ class NotificationHelper {
       iOS: iosSettings,
     );
 
-    // 🔥 التغيير هنا: إزالة "settings:"
     await _notifications.initialize(settings);
 
     debugPrint('✅ Local Notifications initialized');
@@ -45,7 +44,6 @@ class NotificationHelper {
       iOS: iosDetails,
     );
 
-    // 🔥 التغيير هنا: إزالة "notificationDetails:" و "id:" و "title:" و "body:"
     await _notifications.show(
       id,
       title,
