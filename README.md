@@ -2,6 +2,11 @@
 
 A train ticket booking app for Egyptian National Railways, built with Flutter and Firebase.
 
+![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+
 Users can search trains, pick seats, pay, and get e-tickets with QR codes. There's also a conductor-side dashboard for managing passengers, scanning tickets, and updating train statuses in real time.
 
 ## Features
