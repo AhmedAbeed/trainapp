@@ -10,6 +10,18 @@ A full-featured mobile ticketing and operations management system for the **Egyp
 
 ---
 
+## App Showcase
+
+<div align="center">
+  <img src="docs/assets/app_showcase.png" alt="Masr Train App Mobile Showcase" width="100%" />
+</div>
+
+<p align="center">
+  <sub>Comprehensive Railway Mobility Experience: Role Selection, Vodafone Cash Checkout, Real-Time Train Status & Delay Engine, Digital QR Ticket, Live OpenStreetMap GPS Tracking, and Conductor Operations Dashboard.</sub>
+</p>
+
+---
+
 ## Contactless QR Ticketing & Tracking Workflow
 
 The system coordinates passenger booking, conductor validation, and live notifications through real-time Firestore listeners and Firebase Cloud Messaging (FCM).
